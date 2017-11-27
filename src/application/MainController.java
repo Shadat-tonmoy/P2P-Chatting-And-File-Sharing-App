@@ -54,13 +54,15 @@ public class MainController extends Thread{
 	
 	@Override
 	public void run() {
-		while(!messageReceiver.isConnected())
+		System.out.println(Thread.currentThread().getName()+" started....");
+		while(!messageReceiver.isConnected() || messageReceiver.getReceiverPort()!=-1 || messageSender.getSenderPort()!=-1)
 		{
 			System.out.println("not connected");
 			try {
 				Thread.sleep(1000);
-				if(messageReceiver.isConnected())
+				if(messageReceiver.isConnected() && messageReceiver.getReceiverPort()!=-1 && messageSender.getSenderPort()!=-1)
 				{
+					System.out.println("Receiving at :"+messageReceiver.getReceiverPort());
 					System.out.println("Boom");
 					showChatScreen();
 					messageReceiver.setRoot(root);
@@ -82,13 +84,13 @@ public class MainController extends Thread{
 				e.printStackTrace();
 			}
 		}
-		if(conncetionChecker.isAlive())
-		{
-			conncetionChecker.stop();
-			System.out.println("Thread Closed");
-			
-		}
-		else System.out.println("Thread not active");
+//		if(conncetionChecker.isAlive())
+//		{
+//			conncetionChecker.stop();
+//			System.out.println("Thread Closed");
+//			
+//		}
+//		else System.out.println("Thread not active");
 		
 	}
 	

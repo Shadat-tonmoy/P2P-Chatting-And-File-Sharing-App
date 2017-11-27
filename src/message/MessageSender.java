@@ -44,15 +44,17 @@ public class MessageSender extends Thread{
 			client = null;
 			while(client==null)
 			{
+				System.out.println("Waiting from client");
 				try{
 					client = new Socket(destinationIP, destinationPort);
+					
 					
 				} catch(IOException e){
 					System.out.println("Port Not Found.Retrying....");
 					Thread.sleep(1000);
 				}
 			}
-//			System.out.println("From Client : Just connected to " + client.getRemoteSocketAddress());
+			System.out.println("From Client : Just connected to " + client.getRemoteSocketAddress());
 //			OutputStream outToServer;
 //			DataOutputStream out;
 //			InputStream inFromServer;
@@ -86,7 +88,9 @@ public class MessageSender extends Thread{
 	
 	public int getSenderPort()
 	{
-		return client.getPort();
+		if(client!=null)
+			return client.getPort();
+		return -1;
 	}
 	
 	public void sendMessage(String message) throws IOException

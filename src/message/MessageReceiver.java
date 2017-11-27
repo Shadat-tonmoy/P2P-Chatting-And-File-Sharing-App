@@ -72,12 +72,14 @@ public class MessageReceiver extends Thread {
 				if(receiver!=null)
 				{
 					connected = true;
+					System.out.println("Receiver is not null "+receiver.getLocalPort());
 					System.out.println("Active..."+Thread.activeCount());
 					//MainController.message.setText("Connected");
 				}
 				
 				//System.out.println("Received from "+receiver);
 				while(true){
+					System.out.println("inf");
 					in = new DataInputStream(receiver.getInputStream());
 					String receivedMessage = in.readUTF();
 					finalMessage = receivedMessage;
@@ -153,7 +155,9 @@ public class MessageReceiver extends Thread {
 	}
 	
 	public int getReceiverPort() {
-		return receiverSocket.getLocalPort();
+		if(receiverSocket!=null)
+			return receiverSocket.getLocalPort();
+		return -1;
 	}
 	
 	public void setRoot(Parent root) {
