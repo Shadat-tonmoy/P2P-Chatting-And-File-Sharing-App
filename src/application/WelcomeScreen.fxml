@@ -4,6 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -14,11 +16,11 @@
    <children>
       <Pane minHeight="590.0" minWidth="593.0" prefHeight="590.0" prefWidth="593.0" style="-fx-background-color: rgb(52, 73, 94); -fx-min-height: 620; -fx-min-width: 620;">
          <children>
-            <Label fx:id="message" layoutX="265.0" layoutY="88.0" text="Label" textFill="WHITE">
-               <font>
-                  <Font size="20.0" />
-               </font>
-            </Label>
+            <ImageView fitHeight="108.0" fitWidth="101.0" layoutX="224.0" layoutY="38.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../homeImage.png" />
+               </image>
+            </ImageView>
             <VBox layoutX="88.0" layoutY="158.0" prefHeight="300.0" prefWidth="400.0" style="-fx-spacing: 15;">
                <children>
                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="430.0" text="IP Address" textAlignment="CENTER" textFill="WHITE">

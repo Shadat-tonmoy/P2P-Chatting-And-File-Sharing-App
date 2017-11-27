@@ -16,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import message.*;
@@ -25,7 +26,7 @@ public class MainController extends Thread{
 	private Main main;
 	private Parent root;
 	private FXMLLoader fxmlLoader;
-	@FXML private Button submitButton,resetButton,messageSendButton;
+	@FXML private Button submitButton,resetButton;
 	@FXML private TextField ipAddrField,portField,clientPortField;
 	private String ipAddressToConnect,portToConnect,portToListen;
 	@FXML private Label portNoToListenEmptyMessage,portNoEmptyMessage,ipaddrEmptyMessage;
@@ -35,6 +36,7 @@ public class MainController extends Thread{
 	private MessageReceiver messageReceiver;
 	private MessageSender messageSender;
 	private Thread conncetionChecker;
+	@FXML private ImageView messageSendButton;
 	public MainController()
 	{
 		
@@ -115,7 +117,8 @@ public class MainController extends Thread{
 					validateForm();
 					if(isValid){
 						System.out.println("Sending...");
-						message.setText("Connecting.....");
+						submitButton.setOpacity(0.7);
+						submitButton.setText("Connecting...");
 						messageReceiver = new MessageReceiver(Integer.parseInt(portToListen));
 						messageReceiver.start();
 						messageSender = new MessageSender(ipAddressToConnect,Integer.parseInt(portToConnect));
@@ -171,7 +174,7 @@ public class MainController extends Thread{
 		
 		listeningAtLabel = (Label) root.lookup("#listeningAtLabel");
 		connectedToLabel = (Label) root.lookup("#connectedToLabel");
-		messageSendButton = (Button) root.lookup("#messageSendButton");
+		messageSendButton = (ImageView) root.lookup("#messageSendButton");
 		messageSendBox = (TextArea) root.lookup("#messageSendBox");
 		connectedToLabel.setText("Connected To/ Sending Message at Port : "+messageSender.getSenderPort());
 		listeningAtLabel.setText("Receiving Message at Port :"+messageReceiver.getReceiverPort());
@@ -182,6 +185,7 @@ public class MainController extends Thread{
 				String message = messageSendBox.getText().toString();
 				try {
 					messageSender.sendMessage(message);
+					messageSendBox.setText("");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

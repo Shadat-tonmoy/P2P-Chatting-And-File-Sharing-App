@@ -160,6 +160,7 @@ public class MessageReceiver extends Thread {
 		this.root = root;
 		//message = (Label) root.lookup("#message");
 		messageListView = (ScrollPane) root.lookup("#messageList");
+		messageListView.setFitToWidth(true);
 		//messageListView.setBackground(new Background(BackgroundFill));
 		messageListView.setStyle("-fx-control-inner-background: black;");
 	}
