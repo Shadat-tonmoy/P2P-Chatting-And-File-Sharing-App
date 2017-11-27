@@ -176,7 +176,7 @@ public class MainController extends Thread{
 		connectedToLabel = (Label) root.lookup("#connectedToLabel");
 		messageSendButton = (ImageView) root.lookup("#messageSendButton");
 		messageSendBox = (TextArea) root.lookup("#messageSendBox");
-		connectedToLabel.setText("Connected To/ Sending Message at Port : "+messageSender.getSenderPort());
+		connectedToLabel.setText("Sending Message at Port : "+messageSender.getSenderPort());
 		listeningAtLabel.setText("Receiving Message at Port :"+messageReceiver.getReceiverPort());
 		messageSendButton.setOnMouseClicked(new EventHandler<Event>() {
 

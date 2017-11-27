@@ -7,23 +7,14 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.text.Font?>
 
 
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: black; -fx-min-height: 600; -fx-min-width: 600;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <Label fx:id="connectedToLabel" layoutX="90.0" layoutY="14.0" text="Label" textFill="WHITE">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
-      <Label fx:id="listeningAtLabel" layoutX="90.0" layoutY="54.0" style="-fx-background-color: #e67e22; -fx-padding: 10; -fx-background-radius: 8;" text="Label" textFill="WHITE">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Label>
+      <Label fx:id="connectedToLabel" layoutX="421.0" style="-fx-background-color: #3498db; -fx-padding: 5; -fx-background-radius: 2;" text="Label" textFill="WHITE" />
+      <Label fx:id="listeningAtLabel" layoutX="4.0" layoutY="3.0" style="-fx-background-color: #e67e22; -fx-padding: 5; -fx-background-radius: 2;" text="Label" textFill="WHITE" />
       <TextArea fx:id="messageSendBox" layoutX="9.0" layoutY="543.0" prefHeight="50.0" prefWidth="475.0" />
-      <ScrollPane fx:id="messageList" layoutX="6.0" layoutY="103.0" prefHeight="430.0" prefWidth="585.0" style="-fx-background: #000000;">
+      <ScrollPane fx:id="messageList" layoutX="6.0" layoutY="37.0" prefHeight="496.0" prefWidth="585.0" style="-fx-background: #000000;">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="518.0" />
         </content>
