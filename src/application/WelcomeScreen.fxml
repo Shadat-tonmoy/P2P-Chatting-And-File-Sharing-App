@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+   <children>
+      <Pane minHeight="590.0" minWidth="593.0" prefHeight="590.0" prefWidth="593.0" style="-fx-background-color: rgb(52, 73, 94); -fx-min-height: 620; -fx-min-width: 620;">
+         <children>
+            <Label fx:id="message" layoutX="265.0" layoutY="88.0" text="Label" textFill="WHITE">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <VBox layoutX="88.0" layoutY="158.0" prefHeight="300.0" prefWidth="400.0" style="-fx-spacing: 15;">
+               <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="430.0" text="IP Address" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="ipAddrField" style="-fx-min-height: 35;" />
+                  <Label fx:id="ipaddrEmptyMessage" prefHeight="20.0" prefWidth="375.0" text="* Field is required" textFill="#ff1500">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="430.0" text="Port Number" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="portField" style="-fx-min-height: 35;" />
+                  <Label fx:id="portNoEmptyMessage" prefHeight="20.0" prefWidth="375.0" text="* Field is required" textFill="#ff1500">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </Label>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="430.0" text="Port Number To Listen" textAlignment="CENTER" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="clientPortField" style="-fx-min-height: 35;" />
+                  <Label fx:id="portNoToListenEmptyMessage" prefHeight="20.0" prefWidth="375.0" text="* Field is required" textFill="#ff1500">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets left="10.0" />
+                     </padding>
+                  </Label>
+                  <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" style="-fx-spacing: 50; -fx-padding: 10;">
+                     <children>
+                        <Button fx:id="submitButton" mnemonicParsing="false" style="-fx-background-color: rgb(39, 174, 96); -fx-text-fill: #ffffff; -fx-border-radius: 10;" text="Submit">
+                           <font>
+                              <Font size="16.0" />
+                           </font>
+                        </Button>
+                        <Button fx:id="resetButton" mnemonicParsing="false" style="-fx-background-color: rgb(231, 76, 60); -fx-text-fill: #ffffff;" text="Reset All Field">
+                           <font>
+                              <Font size="16.0" />
+                           </font></Button>
+                     </children>
+                  </HBox>
+               </children>
+               
+               
+               
+               
+               </VBox>
+         </children></Pane>
+   </children>
+</AnchorPane>

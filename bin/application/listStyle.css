@@ -1,0 +1,12 @@
+.list-view .list-cell:even {
+	-fx-background-color: black;
+	-fx-text-fill: white;
+}
+.list-view .list-cell:odd {
+	-fx-background-color: black;
+	-fx-text-fill: white;
+}
+.scroll-pane {
+   -fx-background: #000000;
+   -fx-border-color: #000000;
+}
