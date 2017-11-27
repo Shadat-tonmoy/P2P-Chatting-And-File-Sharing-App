@@ -23,7 +23,7 @@
          </font>
       </Label>
       <TextArea fx:id="messageSendBox" layoutX="9.0" layoutY="543.0" prefHeight="50.0" prefWidth="475.0" />
-      <ScrollPane fx:id="messageList" layoutX="6.0" layoutY="1.0" prefHeight="532.0" prefWidth="585.0" style="-fx-background: #000000;">
+      <ScrollPane fx:id="messageList" layoutX="6.0" layoutY="103.0" prefHeight="430.0" prefWidth="585.0" style="-fx-background: #000000;">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="518.0" />
         </content>
