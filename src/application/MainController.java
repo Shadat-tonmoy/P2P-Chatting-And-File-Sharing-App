@@ -1,24 +1,41 @@
 package application;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import com.sun.javafx.scene.control.skin.CustomColorDialog;
+
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -27,7 +44,7 @@ import message.*;
 public class MainController extends Thread{
 	
 	private Main main;
-	private Parent root;
+	private Pane root;
 	private FXMLLoader fxmlLoader;
 	@FXML private Button submitButton,resetButton;
 	@FXML private TextField ipAddrField,portField,clientPortField;
@@ -39,11 +56,14 @@ public class MainController extends Thread{
 	private MessageReceiver messageReceiver;
 	private MessageSender messageSender;
 	private Thread conncetionChecker;
-	@FXML private ImageView messageSendButton,fileAttachButton;
+	@FXML private ImageView messageSendButton,fileAttachButton,saveMessageButton;
+	@FXML private ColorPicker themeChangeButton;
 	private FileChooser fileChooser;
 	private Stage stage;
 	private File file;
+	private ScrollPane scrollPane;
 	private byte [] byteArray;
+	private ArrayList<String> sentMessages,receivedMessages;
 	public MainController()
 	{
 		
@@ -105,7 +125,7 @@ public class MainController extends Thread{
 	public void showChatScreen() throws IOException
 	{
 		fxmlLoader = new FXMLLoader(getClass().getResource("ChatScreen.fxml"));
-		root = (Parent) fxmlLoader.load();
+		root = (Pane) fxmlLoader.load();
 		if(root==null)
 			System.out.println("NULL");
 		System.out.println("gg"+this.root);
@@ -189,6 +209,10 @@ public class MainController extends Thread{
 		connectedToLabel.setText("Sending Message at Port : "+messageSender.getSenderPort());
 		listeningAtLabel.setText("Receiving Message at Port :"+messageReceiver.getReceiverPort());
 		fileAttachButton = (ImageView) root.lookup("#fileAttachButton");
+		themeChangeButton = (ColorPicker) root.lookup("#themeChangeButton");
+		themeChangeButton.setValue(Color.RED);
+		scrollPane = (ScrollPane) root.lookup("#messageList");
+		saveMessageButton = (ImageView) root.lookup("#saveMessageButton");
 		
 		
 		messageSendButton.setOnMouseClicked(new EventHandler<Event>() {
@@ -224,19 +248,42 @@ public class MainController extends Thread{
 				{
 					String fileName = file.getName();
 					byteArray  = new byte [(int)file.length()];
-			        //fis = new FileInputStream(myFile);
-			        //bis = new BufferedInputStream(fis);
-			        //bis.read(mybytearray,0,mybytearray.length);
-//			          os = sock.getOutputStream();
-//			          System.out.println("Sending " + FILE_TO_SEND + "(" + mybytearray.length + " bytes)");
-//			          os.write(mybytearray,0,mybytearray.length);
-//			          os.flush();
-					
+			        
 				}
-				
+			}
+		});
+		
+		themeChangeButton.setOnAction(new EventHandler<ActionEvent>() {
+
+			@Override
+			public void handle(ActionEvent event) {
+				Color color = themeChangeButton.getValue();
+
+				String hexColor = "#" + Integer.toHexString(color.hashCode()); 
+				//root.setBackground(new Background(new BackgroundFill(Color.web(color.toString()), CornerRadii.EMPTY, Insets.EMPTY)));
+				//scrollPane.setBackground(new Background(new BackgroundFill(Color.web(color.toString()), CornerRadii.EMPTY, Insets.EMPTY)));
+				scrollPane.setStyle("-fx-background: "+hexColor+";-fx-border-color: "+hexColor+";");
+				root.setStyle("-fx-background: "+hexColor+";");
+				System.out.println(scrollPane);
+				try {
+					messageSender.sendBackgroundColor(hexColor);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
+		
+		saveMessageButton.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event arg0) {
+				saveSentMessage();
 				
 			}
 		});
+		
+		
 	}
 	
 	
@@ -288,4 +335,64 @@ public class MainController extends Thread{
 	{
 		message.setText("Connected");
 	}
+	
+	public void saveSentMessage(){
+		sentMessages = messageSender.getMessageList();
+		String messages = "";
+		for(String message : sentMessages)
+		{
+			messages+=message+"\n";
+		}
+		System.out.println(messages);
+		byte[] byteArrayFromString = messages.getBytes(Charset.forName("UTF-8"));
+		
+
+		FileChooser fileSaver = new FileChooser();
+		//FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+		fileSaver.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Text File",
+                        "*.txt"),
+                new FileChooser.ExtensionFilter("Document",
+                        "*.pdf", "*.docx")
+                );
+        File file = fileSaver.showSaveDialog(stage);
+        if(file!=null)
+        {
+        	System.out.println(file.getAbsolutePath());
+        	try {
+				saveFile(file.getAbsolutePath(),byteArrayFromString);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+		
+	}
+	
+	public void saveReceivedMessage()
+	{
+		
+	}
+	
+	public void saveFile(String filePath,byte[] byteArray) throws IOException
+	{
+
+		System.out.println("From OutSide");
+		for(byte b : byteArray)
+		{
+			System.out.print((char)b);
+		}
+		FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+	    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+	    
+		//System.out.println("From Receiver "+byteArray.length);
+	    
+	    bufferedOutputStream.write(byteArray, 0, byteArray.length);
+	    bufferedOutputStream.flush();
+	    bufferedOutputStream.close();
+//	    System.out.println("Received "+bufferedOutputStream.toString());
+		
+	}
+
+
 }

@@ -25,13 +25,17 @@ import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -46,7 +50,7 @@ public class MessageReceiver extends Thread {
 	private String finalMessage;
 	private boolean connected;
 	private Socket receiver;
-	private Parent root;
+	private Pane root;
 	private Label message;
 	static VBox vbox;
 	private Stage stage;
@@ -102,7 +106,8 @@ public class MessageReceiver extends Thread {
 				    JSONParser jsonParser = new JSONParser();
 				    JSONObject jsonObject = (JSONObject) jsonParser.parse(receivedMessage);
 				    boolean isFile = (boolean) jsonObject.get("isFile");
-				    System.out.println("IS File "+isFile);
+				    boolean isColor = (boolean) jsonObject.get("isColor");
+				    //System.out.println("IS File "+isFile);
 				    if(isFile)
 				    {
 				    	
@@ -125,10 +130,12 @@ public class MessageReceiver extends Thread {
 								messageLabel.setFont(new Font(15));
 								messageLabel.setStyle("-fx-background-color:#e67e22;-fx-padding:10;-fx-background-radius:8;");
 								messageLabel.setTextFill(Color.WHITE);
+								messageLabel.setUnderline(true);
 								BorderPane borderPane = new BorderPane();
 								borderPane.setLeft(messageLabel);
 								vbox.getChildren().add(borderPane);
 								messageListView.setContent(vbox);
+								messageLabel.setCursor(Cursor.HAND);
 								messageLabel.setOnMouseClicked(new EventHandler<Event>() {
 
 									@Override
@@ -163,10 +170,20 @@ public class MessageReceiver extends Thread {
 							}
 						});
 				    }
+				    else if(isColor)
+				    {
+				    	String hexColor = (String) jsonObject.get("color");//messageListView.setBackground(new Background(new BackgroundFill(Color.web(color.toString()), CornerRadii.EMPTY, Insets.EMPTY)));
+				    	messageListView.setStyle("-fx-background: "+hexColor+";-fx-border-color: "+hexColor+";");
+						root.setStyle("-fx-background: "+hexColor+";");
+				    	
+				    }
 				    else
 				    {
 				    	String message = (String) jsonObject.get("message");
-				    	System.out.println(message);
+				    	for(String msg : messageList)
+				    	{
+				    		System.out.println(msg);
+				    	}
 				    	finalMessage = message;
 				    	if(finalMessage.length()>50)
 						{
@@ -182,6 +199,7 @@ public class MessageReceiver extends Thread {
 								}
 							}
 						}
+				    	messageList.add(finalMessage);
 				    	
 				    	Platform.runLater(new Runnable() {
 							
@@ -200,28 +218,10 @@ public class MessageReceiver extends Thread {
 							}
 						});
 				    }
-				    
-				    
-				    
-				    
-				    if(inputSize>0)
-				    {
-				    	byte[] byteArray = new byte[1024];
-				    	
-				    }
-				    
-					System.out.println(finalMessage);	
+					//System.out.println(finalMessage);	
 				}
-				
-				//out = new DataOutputStream(receiver.getOutputStream());
-				//out.writeUTF("'Server' Said : message received");
-				//out.close();
-				//out.writeUTF(output);
-				//receiver.close();
-				//messageList.add(receivedMessage);
-				
 			}
-			System.out.println("Dropped......."+receiver);
+//			System.out.println("Dropped......."+receiver);
 			//System.out.println("From Server : Just connected to " + receiver.getRemoteSocketAddress());
 		} catch (IOException | ParseException e1) {
 			// TODO Auto-generated catch block
@@ -240,13 +240,16 @@ public class MessageReceiver extends Thread {
 		return -1;
 	}
 	
-	public void setRoot(Parent root) {
+	public void setRoot(Pane root) {
 		this.root = root;
 		//message = (Label) root.lookup("#message");
 		messageListView = (ScrollPane) root.lookup("#messageList");
+		messageListView.setHbarPolicy(ScrollBarPolicy.NEVER);
+		messageListView.setVbarPolicy(ScrollBarPolicy.NEVER);
 		messageListView.setFitToWidth(true);
 		//messageListView.setBackground(new Background(BackgroundFill));
 		messageListView.setStyle("-fx-control-inner-background: black;");
+		
 	}
 
 
@@ -260,13 +263,19 @@ public class MessageReceiver extends Thread {
     	FileOutputStream fileOutputStream = new FileOutputStream(filePath);
 	    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
 	    
-		System.out.println("From Receiver "+byteArray.length);
+		//System.out.println("From Receiver "+byteArray.length);
 	    bufferedOutputStream.write(byteArray, 0, byteArray.length);
 	    bufferedOutputStream.flush();
 	    bufferedOutputStream.close();
-	    System.out.println("Received "+bufferedOutputStream.toString());
+//	    System.out.println("Received "+bufferedOutputStream.toString());
 		
 	}
+
+
+	public ArrayList<String> getMessageList() {
+		return messageList;
+	}
+	
 	
 	
 }

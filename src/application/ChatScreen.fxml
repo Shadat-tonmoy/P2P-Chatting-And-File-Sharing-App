@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
@@ -12,20 +13,26 @@
    <children>
       <Label fx:id="connectedToLabel" layoutX="421.0" style="-fx-background-color: #3498db; -fx-padding: 5; -fx-background-radius: 2;" text="Label" textFill="WHITE" />
       <Label fx:id="listeningAtLabel" layoutX="4.0" layoutY="3.0" style="-fx-background-color: #e67e22; -fx-padding: 5; -fx-background-radius: 2;" text="Label" textFill="WHITE" />
-      <TextArea fx:id="messageSendBox" layoutX="9.0" layoutY="543.0" prefHeight="50.0" prefWidth="430.0" />
-      <ScrollPane fx:id="messageList" layoutX="6.0" layoutY="37.0" prefHeight="496.0" prefWidth="585.0" style="-fx-background: #000000;">
+      <TextArea fx:id="messageSendBox" layoutX="9.0" layoutY="503.0" prefHeight="38.0" prefWidth="508.0" />
+      <ScrollPane fx:id="messageList" layoutX="6.0" layoutY="37.0" prefHeight="451.0" prefWidth="585.0" style="-fx-background: rgb(70, 50, 70); -fx-hbar-policy: never; -fx-vbar-policy: never;">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="518.0" />
         </content>
       </ScrollPane>
-      <ImageView fx:id="messageSendButton" fitHeight="50.0" fitWidth="63.0" layoutX="525.0" layoutY="535.0" pickOnBounds="true" preserveRatio="true" rotate="-35.0">
+      <ImageView fx:id="messageSendButton" fitHeight="50.0" fitWidth="63.0" layoutX="533.0" layoutY="494.0" pickOnBounds="true" preserveRatio="true" rotate="-35.0">
          <image>
             <Image url="@../images/send.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="fileAttachButton" fitHeight="42.0" fitWidth="38.0" layoutX="460.0" layoutY="547.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="fileAttachButton" fitHeight="38.0" fitWidth="27.0" layoutX="22.0" layoutY="559.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@../images/file.png" />
+         </image>
+      </ImageView>
+      <ColorPicker fx:id="themeChangeButton" layoutX="77.0" layoutY="556.0" prefHeight="30.0" prefWidth="50.0" />
+      <ImageView fx:id="saveMessageButton" fitHeight="46.0" fitWidth="44.0" layoutX="148.0" layoutY="551.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/save.png" />
          </image>
       </ImageView>
    </children>

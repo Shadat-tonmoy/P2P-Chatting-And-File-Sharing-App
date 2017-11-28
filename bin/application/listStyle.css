@@ -10,3 +10,14 @@
    -fx-background: #000000;
    -fx-border-color: #000000;
 }
+
+.color-picker {
+    -fx-background-image: url(../images/theme.png);
+    -fx-background-size: 90 50;
+    -fx-background-position: top;
+    -fx-background-repeat: no-repeat;   
+}
+.color-picker .color-picker-label .picker-color {
+    -fx-alignment : bottom-center;
+    visibility: hide;
+} 

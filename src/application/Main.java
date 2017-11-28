@@ -13,10 +13,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 
 
 public class Main extends Application {
-	private Parent root;
+	private Pane root;
 	private Parent chatScreen;
 	private Scene scene;
 	private MainController mainController;
@@ -38,13 +39,14 @@ public class Main extends Application {
 			mainController.setStage(primaryStage);
 			
 			
+			
 		} catch(Exception e) {
 			System.out.println("There is a problem");
 			e.printStackTrace();
 		}
 	}
 	
-	public void setRoot(Parent root)
+	public void setRoot(Pane root)
 	{
 		this.root = root;
 		scene.setRoot(root);
@@ -52,7 +54,7 @@ public class Main extends Application {
 	
 	
 	
-	public Parent getRoot() {
+	public Pane getRoot() {
 		return root;
 	}
 

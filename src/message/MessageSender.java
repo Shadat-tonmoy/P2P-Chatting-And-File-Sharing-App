@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Scanner;
 
@@ -23,6 +24,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -31,9 +33,10 @@ public class MessageSender extends Thread{
 	private String destinationIP;
 	private int destinationPort;
 	private Socket client;
-	private Parent root;
+	private Pane root;
 	@FXML private ScrollPane messageListView;
 	private String messageToSend;
+	private ArrayList<String> messageList;
 	public MessageSender()
 	{
 		
@@ -42,6 +45,7 @@ public class MessageSender extends Thread{
 	{	
 		this.destinationIP = destinationIP;
 		this.destinationPort = destinationPort;
+		messageList = new ArrayList<String>();
 	}
 	@Override
 	public void run() {
@@ -61,30 +65,7 @@ public class MessageSender extends Thread{
 				}
 			}
 			System.out.println("From Client : Just connected to " + client.getRemoteSocketAddress());
-//			OutputStream outToServer;
-//			DataOutputStream out;
-//			InputStream inFromServer;
-//			DataInputStream in;
-//			//while (true) {
-//				System.out.println("Enter a message to send to Server");
-//				Scanner sc = new Scanner(System.in);
-//				String inputLine = sc.nextLine();
-//				outToServer = client.getOutputStream();
-//				out = new DataOutputStream(outToServer);
-//				out.writeUTF("'Client' Said : " + inputLine);
-//				out.flush();// + " at address " + client.getLocalSocketAddress());
-//				inFromServer = client.getInputStream();
-//				System.out.println(inFromServer);
-//				in = new DataInputStream(inFromServer);
-//				System.out.println(in);
-				
-				//System.out.println(in.readUTF());
-				//in.close();
-				//out.close();
-				//in.close();
-				//out.close();
-				//client.close();
-			//}
+//			
 		} catch (InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -117,8 +98,10 @@ public class MessageSender extends Thread{
 				}
 			}
 		}
+		messageList.add(messageToSend);
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("isFile", false);
+		jsonObject.put("isColor", false);
 		jsonObject.put("message", messageToSend);
 		OutputStream outToServer = client.getOutputStream();
 		DataOutputStream out = new DataOutputStream(outToServer);
@@ -157,6 +140,7 @@ public class MessageSender extends Thread{
 		OutputStream outToServer = client.getOutputStream();
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("isFile", true);
+		jsonObject.put("isColor", false);
 		jsonObject.put("name", fileName);
 		jsonObject.put("fileStream", Base64.getEncoder().encodeToString(byteArray));
 		DataOutputStream out = new DataOutputStream(outToServer);
@@ -167,7 +151,7 @@ public class MessageSender extends Thread{
 			@Override
 			public void run() {
 				
-				Label messageLabel = new Label("File Sent");
+				Label messageLabel = new Label(fileName+" is sent");
 				//messageLabel.setPadding(new Insets(10,10,10,10));
 				messageLabel.setFont(new Font(15));
 				messageLabel.setStyle("-fx-background-color:#2ecc71;-fx-padding:10;-fx-background-radius:8;");
@@ -179,10 +163,21 @@ public class MessageSender extends Thread{
 				
 			}
 		});
-		
 	}
 	
-	public void setRoot(Parent root) {
+	public void sendBackgroundColor(String color) throws IOException
+	{
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("isColor", true);
+		jsonObject.put("isFile", false);
+		jsonObject.put("color", color);
+		OutputStream outToServer = client.getOutputStream();
+		DataOutputStream out = new DataOutputStream(outToServer);
+		out.writeUTF(jsonObject.toJSONString());
+	}
+	
+	
+	public void setRoot(Pane root) {
 		this.root = root;
 		//message = (Label) root.lookup("#message");
 		messageListView = (ScrollPane) root.lookup("#messageList");
@@ -190,5 +185,10 @@ public class MessageSender extends Thread{
 		//messageListView.setBackground(new Background(BackgroundFill));
 		messageListView.setStyle("-fx-control-inner-background: black;");
 	}
+	public ArrayList<String> getMessageList() {
+		return messageList;
+	}
+	
+	
 
 }
