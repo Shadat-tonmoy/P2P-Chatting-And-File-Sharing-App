@@ -1,5 +1,6 @@
 package application;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -19,6 +20,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import message.*;
 
 public class MainController extends Thread{
@@ -36,7 +39,11 @@ public class MainController extends Thread{
 	private MessageReceiver messageReceiver;
 	private MessageSender messageSender;
 	private Thread conncetionChecker;
-	@FXML private ImageView messageSendButton;
+	@FXML private ImageView messageSendButton,fileAttachButton;
+	private FileChooser fileChooser;
+	private Stage stage;
+	private File file;
+	private byte [] byteArray;
 	public MainController()
 	{
 		
@@ -67,6 +74,7 @@ public class MainController extends Thread{
 					showChatScreen();
 					messageReceiver.setRoot(root);
 					messageSender.setRoot(root);
+					messageReceiver.setStage(stage);
 					if(conncetionChecker.isAlive())
 					{
 						conncetionChecker.stop();
@@ -180,18 +188,53 @@ public class MainController extends Thread{
 		messageSendBox = (TextArea) root.lookup("#messageSendBox");
 		connectedToLabel.setText("Sending Message at Port : "+messageSender.getSenderPort());
 		listeningAtLabel.setText("Receiving Message at Port :"+messageReceiver.getReceiverPort());
+		fileAttachButton = (ImageView) root.lookup("#fileAttachButton");
+		
+		
 		messageSendButton.setOnMouseClicked(new EventHandler<Event>() {
 
 			@Override
 			public void handle(Event arg0) {
 				String message = messageSendBox.getText().toString();
 				try {
-					messageSender.sendMessage(message);
+					if(message.length()>0)
+					{
+						messageSender.sendMessage(message);
+					}
+					if(file!=null)
+					{
+						messageSender.sendFile(byteArray,file);
+						file = null;
+					}
 					messageSendBox.setText("");
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
+			}
+		});
+		
+		fileAttachButton.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				fileChooser = new FileChooser();
+				file = fileChooser.showOpenDialog(stage);
+				if(file!=null)
+				{
+					String fileName = file.getName();
+					byteArray  = new byte [(int)file.length()];
+			        //fis = new FileInputStream(myFile);
+			        //bis = new BufferedInputStream(fis);
+			        //bis.read(mybytearray,0,mybytearray.length);
+//			          os = sock.getOutputStream();
+//			          System.out.println("Sending " + FILE_TO_SEND + "(" + mybytearray.length + " bytes)");
+//			          os.write(mybytearray,0,mybytearray.length);
+//			          os.flush();
+					
+				}
+				
+				
 			}
 		});
 	}
@@ -204,6 +247,12 @@ public class MainController extends Thread{
 		portToListen = clientPortField.getText().toString();
 		
 		
+	}
+	
+	
+	
+	public void setStage(Stage stage) {
+		this.stage = stage;
 	}
 	
 	public void validateForm(){

@@ -8,20 +8,24 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
 
-
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: black; -fx-min-height: 600; -fx-min-width: 600;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <Label fx:id="connectedToLabel" layoutX="421.0" style="-fx-background-color: #3498db; -fx-padding: 5; -fx-background-radius: 2;" text="Label" textFill="WHITE" />
       <Label fx:id="listeningAtLabel" layoutX="4.0" layoutY="3.0" style="-fx-background-color: #e67e22; -fx-padding: 5; -fx-background-radius: 2;" text="Label" textFill="WHITE" />
-      <TextArea fx:id="messageSendBox" layoutX="9.0" layoutY="543.0" prefHeight="50.0" prefWidth="475.0" />
+      <TextArea fx:id="messageSendBox" layoutX="9.0" layoutY="543.0" prefHeight="50.0" prefWidth="430.0" />
       <ScrollPane fx:id="messageList" layoutX="6.0" layoutY="37.0" prefHeight="496.0" prefWidth="585.0" style="-fx-background: #000000;">
         <content>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="518.0" />
         </content>
       </ScrollPane>
-      <ImageView fx:id="messageSendButton" fitHeight="50.0" fitWidth="63.0" layoutX="497.0" layoutY="541.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="messageSendButton" fitHeight="50.0" fitWidth="63.0" layoutX="525.0" layoutY="535.0" pickOnBounds="true" preserveRatio="true" rotate="-35.0">
          <image>
-            <Image url="@../homeImage.png" />
+            <Image url="@../images/send.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="fileAttachButton" fitHeight="42.0" fitWidth="38.0" layoutX="460.0" layoutY="547.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../images/file.png" />
          </image>
       </ImageView>
    </children>

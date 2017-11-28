@@ -1,15 +1,21 @@
 package message;
 
+import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Scanner;
 
 import javax.annotation.processing.Messager;
 import javax.swing.GroupLayout.Alignment;
+
+import org.json.simple.JSONObject;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -111,9 +117,13 @@ public class MessageSender extends Thread{
 				}
 			}
 		}
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("isFile", false);
+		jsonObject.put("message", messageToSend);
 		OutputStream outToServer = client.getOutputStream();
 		DataOutputStream out = new DataOutputStream(outToServer);
-		out.writeUTF(message);
+		out.writeUTF(jsonObject.toJSONString());
+		//out.writeBoolean(false);
 		
 		Platform.runLater(new Runnable() {
 			
@@ -129,20 +139,46 @@ public class MessageSender extends Thread{
 				borderPane.setRight(messageLabel);
 				MessageReceiver.vbox.getChildren().add(borderPane);
 				messageListView.setContent(MessageReceiver.vbox);
-				//ObservableList<String> messages = messageListView.getItems();
-				//for(int i=0;i<messages.size();i++)
-				//	System.out.println(messages.get(i));
+			}
+		});
+		
+	}
+	
+	public void sendFile(byte[] byteArray,File file) throws IOException
+	{
+		//this.messageToSend = message;
+		System.out.println("Sending file....");
+//		
+		FileInputStream fileInputStream = new FileInputStream(file);
+		int i;
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+        bufferedInputStream.read(byteArray,0,byteArray.length);
+        String fileName = file.getName();
+		OutputStream outToServer = client.getOutputStream();
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("isFile", true);
+		jsonObject.put("name", fileName);
+		jsonObject.put("fileStream", Base64.getEncoder().encodeToString(byteArray));
+		DataOutputStream out = new DataOutputStream(outToServer);
+		out.writeUTF(jsonObject.toJSONString());
+		out.flush();
+		Platform.runLater(new Runnable() {
+			
+			@Override
+			public void run() {
 				
-				
-				//message.setText(finalMessage);
-				//System.out.println("Running......"+message.getText());
+				Label messageLabel = new Label("File Sent");
+				//messageLabel.setPadding(new Insets(10,10,10,10));
+				messageLabel.setFont(new Font(15));
+				messageLabel.setStyle("-fx-background-color:#2ecc71;-fx-padding:10;-fx-background-radius:8;");
+				messageLabel.setTextFill(Color.WHITE);
+				BorderPane borderPane = new BorderPane();
+				borderPane.setRight(messageLabel);
+				MessageReceiver.vbox.getChildren().add(borderPane);
+				messageListView.setContent(MessageReceiver.vbox);
 				
 			}
 		});
-//		InputStream inFromServer = client.getInputStream();
-//		System.out.println(inFromServer);
-//		DataInputStream in = new DataInputStream(inFromServer);
-//		System.out.println(in);
 		
 	}
 	

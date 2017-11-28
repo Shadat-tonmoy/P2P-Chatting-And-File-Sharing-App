@@ -1,16 +1,28 @@
 package message;
 
+import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import java.util.Base64;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import application.MainController;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
@@ -23,6 +35,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 public class MessageReceiver extends Thread {
 	
@@ -35,6 +49,7 @@ public class MessageReceiver extends Thread {
 	private Parent root;
 	private Label message;
 	static VBox vbox;
+	private Stage stage;
 	@FXML private ScrollPane messageListView;
 	
 	public MessageReceiver(int port) throws IOException {
@@ -80,56 +95,121 @@ public class MessageReceiver extends Thread {
 				//System.out.println("Received from "+receiver);
 				while(true){
 					System.out.println("inf");
-					in = new DataInputStream(receiver.getInputStream());
-					String receivedMessage = in.readUTF();
-					finalMessage = receivedMessage;
-					if(finalMessage.length()>50)
-					{
-						int len = finalMessage.length();
-						String partA = "", partB = "";
-						for(int i=0;i<len;i+=50)
+				    InputStream inputStream = receiver.getInputStream();
+				    int inputSize = inputStream.available();
+				    in = new DataInputStream(inputStream);
+				    String receivedMessage = in.readUTF();
+				    JSONParser jsonParser = new JSONParser();
+				    JSONObject jsonObject = (JSONObject) jsonParser.parse(receivedMessage);
+				    boolean isFile = (boolean) jsonObject.get("isFile");
+				    System.out.println("IS File "+isFile);
+				    if(isFile)
+				    {
+				    	
+				    	String fileStream = (String) jsonObject.get("fileStream");
+				    	String fileName = (String) jsonObject.get("name");
+				    	
+				    	byte[] byteArray = Base64.getDecoder().decode(fileStream);
+				    	for(byte b : byteArray)
 						{
-							if(i>0)
+							System.out.println((char)b);
+						}
+					    Platform.runLater(new Runnable() {
+							
+							@Override
+							public void run() {
+								//System.out.println("Reee");
+								
+								Label messageLabel = new Label(fileName+" Received");
+								//messageLabel.setPadding(new Insets(10,10,10,10));
+								messageLabel.setFont(new Font(15));
+								messageLabel.setStyle("-fx-background-color:#e67e22;-fx-padding:10;-fx-background-radius:8;");
+								messageLabel.setTextFill(Color.WHITE);
+								BorderPane borderPane = new BorderPane();
+								borderPane.setLeft(messageLabel);
+								vbox.getChildren().add(borderPane);
+								messageListView.setContent(vbox);
+								messageLabel.setOnMouseClicked(new EventHandler<Event>() {
+
+									@Override
+									public void handle(Event event) {
+										FileChooser fileSaver = new FileChooser();
+										//FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+										fileSaver.getExtensionFilters().addAll(
+								                new FileChooser.ExtensionFilter("Text File",
+								                        "*.txt"),
+								                new FileChooser.ExtensionFilter("Document",
+								                        "*.pdf", "*.docx"),
+								                new FileChooser.ExtensionFilter("Image Files",
+								                        "*.jpg", "*.png", "*.bmp", "*.gif"),
+								                new FileChooser.ExtensionFilter("Video Files",
+								                        "*.mkv", "*.mp4"),
+								                new FileChooser.ExtensionFilter("Audio Files",
+								                        "*.mp3", "*.m4p")
+								                );
+							            File file = fileSaver.showSaveDialog(stage);
+							            if(file!=null)
+							            {
+							            	System.out.println(file.getAbsolutePath());
+							            	try {
+												saveFile(file.getAbsolutePath(),byteArray);
+											} catch (IOException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+							            }
+									}
+								});
+							}
+						});
+				    }
+				    else
+				    {
+				    	String message = (String) jsonObject.get("message");
+				    	System.out.println(message);
+				    	finalMessage = message;
+				    	if(finalMessage.length()>50)
+						{
+							int len = finalMessage.length();
+							String partA = "", partB = "";
+							for(int i=0;i<len;i+=50)
 							{
-								partA = finalMessage.substring(0, i);
-								partB = finalMessage.substring(i+1, len);
-								finalMessage = partA + "\n" + partB;
+								if(i>0)
+								{
+									partA = finalMessage.substring(0, i);
+									partB = finalMessage.substring(i+1, len);
+									finalMessage = partA + "\n" + partB;
+								}
 							}
 						}
-					}
-					//messageList.add(receivedMessage);
-					
-//					finalMessage = "";
-//					for(int i=0;i<messageList.size();i++)
-//					{
-//						finalMessage+=messageList.get(i)+"\n";
-//					}
-					//System.out.println(message);
-					Platform.runLater(new Runnable() {
-						
-						@Override
-						public void run() {
+				    	
+				    	Platform.runLater(new Runnable() {
 							
-							Label messageLabel = new Label(finalMessage);
-							//messageLabel.setPadding(new Insets(10,10,10,10));
-							messageLabel.setFont(new Font(15));
-							messageLabel.setStyle("-fx-background-color:#e67e22;-fx-padding:10;-fx-background-radius:8;");
-							messageLabel.setTextFill(Color.WHITE);
-							BorderPane borderPane = new BorderPane();
-							borderPane.setLeft(messageLabel);
-							vbox.getChildren().add(borderPane);
-							messageListView.setContent(vbox);
-							//ObservableList<String> messages = messageListView.getItems();
-							//for(int i=0;i<messages.size();i++)
-							//	System.out.println(messages.get(i));
-							
-							
-							//message.setText(finalMessage);
-							//System.out.println("Running......"+message.getText());
-							
-						}
-					});
-					
+							@Override
+							public void run() {
+								
+								Label messageLabel = new Label(finalMessage);
+								//messageLabel.setPadding(new Insets(10,10,10,10));
+								messageLabel.setFont(new Font(15));
+								messageLabel.setStyle("-fx-background-color:#e67e22;-fx-padding:10;-fx-background-radius:8;");
+								messageLabel.setTextFill(Color.WHITE);
+								BorderPane borderPane = new BorderPane();
+								borderPane.setLeft(messageLabel);
+								vbox.getChildren().add(borderPane);
+								messageListView.setContent(vbox);
+							}
+						});
+				    }
+				    
+				    
+				    
+				    
+				    if(inputSize>0)
+				    {
+				    	byte[] byteArray = new byte[1024];
+				    	
+				    }
+				    
 					System.out.println(finalMessage);	
 				}
 				
@@ -143,7 +223,7 @@ public class MessageReceiver extends Thread {
 			}
 			System.out.println("Dropped......."+receiver);
 			//System.out.println("From Server : Just connected to " + receiver.getRemoteSocketAddress());
-		} catch (IOException e1) {
+		} catch (IOException | ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
@@ -168,12 +248,25 @@ public class MessageReceiver extends Thread {
 		//messageListView.setBackground(new Background(BackgroundFill));
 		messageListView.setStyle("-fx-control-inner-background: black;");
 	}
-	
-//	public String getReceivedMessage()
-//	{
-//		
-//		
-//	}
-	
 
+
+	public void setStage(Stage stage) {
+		this.stage = stage;
+	}
+	
+	public void saveFile(String filePath,byte[] byteArray) throws IOException
+	{
+
+    	FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+	    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+	    
+		System.out.println("From Receiver "+byteArray.length);
+	    bufferedOutputStream.write(byteArray, 0, byteArray.length);
+	    bufferedOutputStream.flush();
+	    bufferedOutputStream.close();
+	    System.out.println("Received "+bufferedOutputStream.toString());
+		
+	}
+	
+	
 }

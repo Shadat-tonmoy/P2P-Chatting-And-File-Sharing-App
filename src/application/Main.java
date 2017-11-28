@@ -3,12 +3,15 @@ package application;
 import javafx.application.Application;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 
 
@@ -17,6 +20,7 @@ public class Main extends Application {
 	private Parent chatScreen;
 	private Scene scene;
 	private MainController mainController;
+	@FXML private ImageView homeImage;
 	@Override
 	public void start(Stage primaryStage) {
 		try {
@@ -31,6 +35,7 @@ public class Main extends Application {
 			primaryStage.setResizable(false);
 			primaryStage.show();
 			mainController = new MainController(this);
+			mainController.setStage(primaryStage);
 			
 			
 		} catch(Exception e) {
