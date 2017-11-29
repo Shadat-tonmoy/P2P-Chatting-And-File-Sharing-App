@@ -18,11 +18,14 @@ import javax.swing.GroupLayout.Alignment;
 
 import org.json.simple.JSONObject;
 
+import application.MainController;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -120,8 +123,9 @@ public class MessageSender extends Thread{
 				
 				Label messageLabel = new Label(messageToSend);
 				Label senderLabel = new Label("You");
+				MainController.allMessages.add(new String(sender+" : "+messageToSend));
 				senderLabel.setFont(new Font(10));
-				senderLabel.setStyle("-fx-padding:2;");
+				senderLabel.setStyle("-fx-padding:2;-fx-background-color:#2c3e50;");
 				senderLabel.setTextFill(Color.WHITE);
 				senderLabel.setVisible(false);
 				
@@ -188,7 +192,7 @@ public class MessageSender extends Thread{
 				messageLabel.setTextFill(Color.WHITE);
 				Label senderLabel = new Label("You");
 				senderLabel.setFont(new Font(10));
-				senderLabel.setStyle("-fx-padding:2;");
+				senderLabel.setStyle("-fx-padding:2;-fx-background-color:#2c3e50;");
 				senderLabel.setTextFill(Color.WHITE);
 				senderLabel.setVisible(false);
 				
@@ -228,6 +232,22 @@ public class MessageSender extends Thread{
 		OutputStream outToServer = client.getOutputStream();
 		DataOutputStream out = new DataOutputStream(outToServer);
 		out.writeUTF(jsonObject.toJSONString());
+		ObservableList<Node> observableList = MessageReceiver.vbox.getChildren();
+    	for(Node i : observableList)
+    	{
+    		BorderPane gotBorderPane = (BorderPane) i;
+    		VBox gotVBox = (VBox) gotBorderPane.getChildren().get(0);
+    		Label sederLabel = (Label) gotVBox.getChildren().get(1);
+    		if(!sederLabel.getText().equals("You"))
+    		{
+    			Label gotmessageLabel = (Label) gotVBox.getChildren().get(0);
+    			
+    			gotmessageLabel.setStyle("-fx-background-color:"+color+";-fx-padding:10;-fx-background-radius:8;");
+    			System.out.println("Color is "+color);
+    			
+    		}
+    			
+    	}
 	}
 	
 	

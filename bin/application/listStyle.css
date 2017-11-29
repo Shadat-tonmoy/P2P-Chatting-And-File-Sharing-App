@@ -13,7 +13,7 @@
 
 .color-picker {
     -fx-background-image: url(../images/theme.png);
-    -fx-background-size: 90 50;
+    -fx-background-size: 45 30;
     -fx-background-position: top;
     -fx-background-repeat: no-repeat;   
 }
@@ -21,3 +21,20 @@
     -fx-alignment : bottom-center;
     visibility: hide;
 } 
+.bodybg{
+	-fx-background-image:url(..//images/bg.jpg);
+	-fx-background-size:100% 100%;
+}
+.chatbodybg{
+	-fx-background-image:url(..//images/chatBg.jpg);
+	-fx-background-size:100% 100%;
+	 
+}
+.scroll-pane > .viewport {
+   -fx-background-color:transparent;
+   -fx-border-color:transparent;
+}
+.scroll-pane {
+   -fx-background-color: transparent;
+   -fx-border-color:transparent ;
+}

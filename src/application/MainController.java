@@ -14,6 +14,7 @@ import java.util.ResourceBundle;
 import com.sun.javafx.scene.control.skin.CustomColorDialog;
 
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -21,20 +22,26 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -64,6 +71,7 @@ public class MainController extends Thread{
 	private ScrollPane scrollPane;
 	private byte [] byteArray;
 	private ArrayList<String> sentMessages,receivedMessages;
+	public static ArrayList<String> allMessages;
 	public MainController()
 	{
 		
@@ -74,6 +82,7 @@ public class MainController extends Thread{
 		root = main.getRoot();
 		initNodes();
 		setOnClickListener();
+		allMessages = new ArrayList<String>();
 		conncetionChecker = new Thread(this,"Conncetion Checker");
 		
 		
@@ -216,6 +225,7 @@ public class MainController extends Thread{
 		themeChangeButton = (ColorPicker) root.lookup("#themeChangeButton");
 		themeChangeButton.setValue(Color.RED);
 		scrollPane = (ScrollPane) root.lookup("#messageList");
+		scrollPane.setStyle("-fx-background:transparent;");
 		saveMessageButton = (ImageView) root.lookup("#saveMessageButton");
 		chatUserNameLabel = (Label) root.lookup("#chatUserNameLabel");
 		chatUserNameLabel.setText("Welcome "+userName);
@@ -268,8 +278,10 @@ public class MainController extends Thread{
 				String hexColor = "#" + Integer.toHexString(color.hashCode()); 
 				//root.setBackground(new Background(new BackgroundFill(Color.web(color.toString()), CornerRadii.EMPTY, Insets.EMPTY)));
 				//scrollPane.setBackground(new Background(new BackgroundFill(Color.web(color.toString()), CornerRadii.EMPTY, Insets.EMPTY)));
-				scrollPane.setStyle("-fx-background: "+hexColor+";-fx-border-color: "+hexColor+";");
-				root.setStyle("-fx-background: "+hexColor+";");
+				//scrollPane.setStyle("-fx-background: "+hexColor+";-fx-border-color: "+hexColor+";");
+				//root.setStyle("-fx-background: "+hexColor+";");
+				
+				
 				System.out.println(scrollPane);
 				try {
 					messageSender.sendBackgroundColor(hexColor);
@@ -284,7 +296,7 @@ public class MainController extends Thread{
 
 			@Override
 			public void handle(Event arg0) {
-				saveSentMessage();
+				saveMessages();
 				
 			}
 		});
@@ -350,10 +362,10 @@ public class MainController extends Thread{
 		message.setText("Connected");
 	}
 	
-	public void saveSentMessage(){
+	public void saveMessages(){
 		sentMessages = messageSender.getMessageList();
 		String messages = "";
-		for(String message : sentMessages)
+		for(String message : allMessages)
 		{
 			messages+=message+"\n";
 		}
@@ -398,14 +410,34 @@ public class MainController extends Thread{
 		}
 		FileOutputStream fileOutputStream = new FileOutputStream(filePath);
 	    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-	    
-		//System.out.println("From Receiver "+byteArray.length);
-	    
 	    bufferedOutputStream.write(byteArray, 0, byteArray.length);
 	    bufferedOutputStream.flush();
 	    bufferedOutputStream.close();
-//	    System.out.println("Received "+bufferedOutputStream.toString());
-		
+	    
+
+	    Label infoMessage = new Label("File is successfully saved as "+filePath);;
+	    infoMessage.setStyle("-fx-font-size:15;-fx-padding:10;");
+	    Label openLink = new Label("Click Here To Open");
+	    openLink.setCursor(Cursor.HAND);
+	    openLink.setStyle("-fx-font-size:15;-fx-padding:10;-fx-text-fill:#3498db;");
+	    openLink.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				try {
+					Runtime.getRuntime().exec("explorer.exe /select," + filePath);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+			}
+		});
+	    VBox vbox = new VBox(infoMessage,openLink);
+	    Alert alert = new Alert(AlertType.INFORMATION);
+	    alert.setTitle("Success");
+	    alert.setHeaderText("Congratulation");
+	    alert.getDialogPane().setContent(vbox);
+	    alert.show();
 	}
 
 

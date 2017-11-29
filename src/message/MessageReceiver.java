@@ -26,6 +26,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -131,7 +132,7 @@ public class MessageReceiver extends Thread {
 								messageLabel.setUnderline(true);
 								Label senderLabel = new Label(sender);
 								senderLabel.setFont(new Font(10));
-								senderLabel.setStyle("-fx-padding:2;");
+								senderLabel.setStyle("-fx-padding:2;-fx-background-color:#2c3e50;");
 								senderLabel.setTextFill(Color.WHITE);
 								senderLabel.setVisible(false);
 								VBox messageInfo = new VBox(messageLabel,senderLabel);
@@ -198,8 +199,17 @@ public class MessageReceiver extends Thread {
 				    else if(isColor)
 				    {
 				    	String hexColor = (String) jsonObject.get("color");//messageListView.setBackground(new Background(new BackgroundFill(Color.web(color.toString()), CornerRadii.EMPTY, Insets.EMPTY)));
-				    	messageListView.setStyle("-fx-background: "+hexColor+";-fx-border-color: "+hexColor+";");
-						root.setStyle("-fx-background: "+hexColor+";");
+				    	ObservableList<Node> observableList = vbox.getChildren();
+				    	for(Node i : observableList)
+				    	{
+				    		BorderPane gotBorderPane = (BorderPane) i;
+				    		VBox gotVBox = (VBox) gotBorderPane.getChildren().get(0);
+				    		Label sederLabel = (Label) gotVBox.getChildren().get(1);
+				    		if(!sederLabel.getText().equals("You"))
+				    			gotVBox.getChildren().get(0).setStyle("-fx-background-color: "+hexColor+";-fx-padding:10;-fx-background-radius:8;");
+				    	}
+				    	//messageListView.setStyle("-fx-background: "+hexColor+";-fx-border-color: "+hexColor+";");
+						//root.setStyle("-fx-background: "+hexColor+";");
 				    	
 				    }
 				    else
@@ -233,10 +243,10 @@ public class MessageReceiver extends Thread {
 							public void run() {
 								
 								Label messageLabel = new Label(finalMessage);
-								//messageLabel.setPadding(new Insets(10,10,10,10));
+								MainController.allMessages.add(new String(sender+" : "+finalMessage));
 								Label senderLabel = new Label(sender);
 								senderLabel.setFont(new Font(10));
-								senderLabel.setStyle("-fx-padding:2;");
+								senderLabel.setStyle("-fx-padding:2;-fx-background-color:#2c3e50;");
 								senderLabel.setTextFill(Color.WHITE);
 								senderLabel.setVisible(false);
 								messageLabel.setFont(new Font(15));
@@ -314,8 +324,6 @@ public class MessageReceiver extends Thread {
 
     	FileOutputStream fileOutputStream = new FileOutputStream(filePath);
 	    BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-	    
-		//System.out.println("From Receiver "+byteArray.length);
 	    bufferedOutputStream.write(byteArray, 0, byteArray.length);
 	    bufferedOutputStream.flush();
 	    bufferedOutputStream.close();
@@ -341,14 +349,8 @@ public class MessageReceiver extends Thread {
 	    Alert alert = new Alert(AlertType.INFORMATION);
 	    alert.setTitle("Success");
 	    alert.setHeaderText("Congratulation");
-	    
-	    //String s ="File has been successfully saved at "+filePath;
-	    //alert.setContentText(s);
 	    alert.getDialogPane().setContent(vbox);
 	    alert.show();
-
-//	    System.out.println("Received "+bufferedOutputStream.toString());
-		
 	}
 
 

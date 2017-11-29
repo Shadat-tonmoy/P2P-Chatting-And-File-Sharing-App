@@ -14,21 +14,20 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
    <children>
-      <Pane minHeight="590.0" minWidth="593.0" prefHeight="590.0" prefWidth="593.0" style="-fx-background-color: rgb(52, 73, 94); -fx-min-height: 680; -fx-min-width: 620;">
+      <Pane minHeight="590.0" minWidth="593.0" prefHeight="590.0" prefWidth="593.0" style="-fx-background-color: rgba(189, 195, 199,0.8); -fx-min-height: 680; -fx-min-width: 620;" styleClass="bodybg" stylesheets="@listStyle.css">
          <children>
-            <ImageView fitHeight="66.0" fitWidth="81.0" layoutX="254.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../images/homeImage.png" />
-               </image>
-            </ImageView>
-            <VBox layoutX="88.0" layoutY="85.0" prefHeight="300.0" prefWidth="400.0" style="-fx-spacing: 15;">
+            <VBox layoutX="70.0" layoutY="91.0" prefHeight="477.0" prefWidth="480.0" style="-fx-spacing: 15; -fx-background-color: rgba(149, 165, 166,0.7); -fx-padding: 50;">
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="430.0" text="User Name" textAlignment="CENTER" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="userNameField" minHeight="34.0" prefWidth="400.0" style="-fx-min-height: 35;" />
+                  <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-spacing: 10;">
+                     <children>
+                        <ImageView fitHeight="41.0" fitWidth="74.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/userIcon.png" />
+                           </image>
+                        </ImageView>
+                        <TextField fx:id="userNameField" minHeight="34.0" prefHeight="41.0" prefWidth="337.0" promptText="User Name" style="-fx-min-height: 35;" />
+                     </children>
+                  </HBox>
                   <Label fx:id="userNameEmptyMessage" prefHeight="20.0" prefWidth="375.0" text="* Field is required" textFill="#ff1500">
                      <font>
                         <Font size="14.0" />
@@ -40,12 +39,16 @@
                         <Insets left="10.0" />
                      </VBox.margin>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="430.0" text="IP Address" textAlignment="CENTER" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="ipAddrField" minHeight="34.0" prefWidth="400.0" style="-fx-min-height: 35;" />
+                  <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-spacing: 10;">
+                     <children>
+                        <ImageView fitHeight="41.0" fitWidth="74.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/ipIcon.png" />
+                           </image>
+                        </ImageView>
+                        <TextField fx:id="ipAddrField" minHeight="34.0" prefHeight="41.0" prefWidth="330.0" promptText="IP Address" style="-fx-min-height: 35;" />
+                     </children>
+                  </HBox>
                   <Label fx:id="ipaddrEmptyMessage" prefHeight="20.0" prefWidth="375.0" text="* Field is required" textFill="#ff1500">
                      <font>
                         <Font size="14.0" />
@@ -57,12 +60,16 @@
                         <Insets left="10.0" />
                      </VBox.margin>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="430.0" text="Port Number" textAlignment="CENTER" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="portField" style="-fx-min-height: 35;" />
+                  <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-spacing: 10;">
+                     <children>
+                        <ImageView fitHeight="40.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/portIcon.png" />
+                           </image>
+                        </ImageView>
+                        <TextField fx:id="portField" prefHeight="41.0" prefWidth="334.0" promptText="Port Number To Connect" style="-fx-min-height: 35;" />
+                     </children>
+                  </HBox>
                   <Label fx:id="portNoEmptyMessage" prefHeight="20.0" prefWidth="375.0" text="* Field is required" textFill="#ff1500">
                      <font>
                         <Font size="14.0" />
@@ -74,12 +81,16 @@
                         <Insets left="10.0" />
                      </padding>
                   </Label>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="34.0" prefWidth="430.0" text="Port Number To Listen" textAlignment="CENTER" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <TextField fx:id="clientPortField" style="-fx-min-height: 35;" />
+                  <HBox prefHeight="100.0" prefWidth="200.0" style="-fx-spacing: 10;">
+                     <children>
+                        <ImageView fitHeight="41.0" fitWidth="48.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../images/portIcon2.png" />
+                           </image>
+                        </ImageView>
+                        <TextField fx:id="clientPortField" prefHeight="41.0" prefWidth="330.0" promptText="Port Number To Listen" style="-fx-min-height: 35;" />
+                     </children>
+                  </HBox>
                   <Label fx:id="portNoToListenEmptyMessage" prefHeight="20.0" prefWidth="375.0" text="* Field is required" textFill="#ff1500">
                      <font>
                         <Font size="14.0" />
@@ -110,6 +121,18 @@
                
                
                </VBox>
+            <HBox layoutX="70.0" layoutY="28.0" prefHeight="64.0" prefWidth="480.0" style="-fx-spacing: 20; -fx-background-color: rgba(41, 128, 185,1.0);">
+               <children>
+                  <Label prefHeight="64.0" prefWidth="480.0" text="App Name - An Awsome App!!!" textAlignment="CENTER" textFill="#fffdfd">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                     <padding>
+                        <Insets left="15.0" />
+                     </padding>
+                  </Label>
+               </children>
+            </HBox>
          </children></Pane>
    </children>
 </AnchorPane>
