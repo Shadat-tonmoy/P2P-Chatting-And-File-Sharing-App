@@ -47,9 +47,9 @@ public class MainController extends Thread{
 	private Pane root;
 	private FXMLLoader fxmlLoader;
 	@FXML private Button submitButton,resetButton;
-	@FXML private TextField ipAddrField,portField,clientPortField;
-	private String ipAddressToConnect,portToConnect,portToListen;
-	@FXML private Label portNoToListenEmptyMessage,portNoEmptyMessage,ipaddrEmptyMessage;
+	@FXML private TextField ipAddrField,portField,clientPortField,userNameField;
+	private String ipAddressToConnect,portToConnect,portToListen,userName;
+	@FXML private Label portNoToListenEmptyMessage,portNoEmptyMessage,ipaddrEmptyMessage,userNameEmptyMessage,chatUserNameLabel;
 	@FXML public  Label message,connectedToLabel,listeningAtLabel;
 	@FXML private TextArea messageSendBox;
 	private boolean isValid;
@@ -94,6 +94,7 @@ public class MainController extends Thread{
 					showChatScreen();
 					messageReceiver.setRoot(root);
 					messageSender.setRoot(root);
+					messageSender.setSender(userName);
 					messageReceiver.setStage(stage);
 					if(conncetionChecker.isAlive())
 					{
@@ -193,10 +194,13 @@ public class MainController extends Thread{
 		portNoToListenEmptyMessage = (Label) root.lookup("#portNoToListenEmptyMessage");
 		portNoEmptyMessage = (Label) root.lookup("#portNoEmptyMessage");
 		message = (Label) root.lookup("#message");
+		userNameField = (TextField) root.lookup("#userNameField");
+		userNameEmptyMessage = (Label) root.lookup("#userNameEmptyMessage");
 		System.out.println(portField);
 		ipaddrEmptyMessage.setVisible(false);
 		portNoEmptyMessage.setVisible(false);
 		portNoToListenEmptyMessage.setVisible(false);
+		userNameEmptyMessage.setVisible(false);
 		
 	}
 	
@@ -213,6 +217,8 @@ public class MainController extends Thread{
 		themeChangeButton.setValue(Color.RED);
 		scrollPane = (ScrollPane) root.lookup("#messageList");
 		saveMessageButton = (ImageView) root.lookup("#saveMessageButton");
+		chatUserNameLabel = (Label) root.lookup("#chatUserNameLabel");
+		chatUserNameLabel.setText("Welcome "+userName);
 		
 		
 		messageSendButton.setOnMouseClicked(new EventHandler<Event>() {
@@ -292,8 +298,7 @@ public class MainController extends Thread{
 		ipAddressToConnect = ipAddrField.getText().toString();
 		portToConnect = portField.getText().toString();
 		portToListen = clientPortField.getText().toString();
-		
-		
+		userName = userNameField.getText().toString();
 	}
 	
 	
@@ -327,6 +332,15 @@ public class MainController extends Thread{
 		}	
 		else {
 			portNoToListenEmptyMessage.setVisible(false);
+		}
+		
+		if(userName.isEmpty()){
+			userNameEmptyMessage.setVisible(true);
+			isValid = false;
+		}
+		else 
+		{
+			userNameEmptyMessage.setVisible(false);
 		}
 		System.out.println(isValid);
 	}

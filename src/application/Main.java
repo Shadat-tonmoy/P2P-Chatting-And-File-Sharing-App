@@ -29,7 +29,7 @@ public class Main extends Application {
 			root = FXMLLoader.load(getClass().getResource("WelcomeScreen.fxml"));
 			System.out.println(root.lookup("#anotherButton"));
 			chatScreen = FXMLLoader.load(getClass().getResource("ChatScreen.fxml"));
-			scene = new Scene(root,600,600);
+			scene = new Scene(root,600,650);
 			scene.getStylesheets().add(getClass().getResource("listStyle.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.setTitle("Welcome");

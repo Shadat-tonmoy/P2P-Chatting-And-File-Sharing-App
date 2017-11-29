@@ -27,6 +27,9 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -47,7 +50,7 @@ public class MessageReceiver extends Thread {
 
 	private ServerSocket receiverSocket;
 	private ArrayList<String> messageList;
-	private String finalMessage;
+	private String finalMessage,sender;
 	private boolean connected;
 	private Socket receiver;
 	private Pane root;
@@ -66,11 +69,6 @@ public class MessageReceiver extends Thread {
 		vbox.setSpacing(10);
 		vbox.setMaxWidth(600);
 		vbox.setMinWidth(570);
-		
-		//messageListView = new ListView<>();
-
-		
-			
 	}
 	
 	
@@ -113,7 +111,7 @@ public class MessageReceiver extends Thread {
 				    	
 				    	String fileStream = (String) jsonObject.get("fileStream");
 				    	String fileName = (String) jsonObject.get("name");
-				    	
+				    	sender = (String) jsonObject.get("sender");
 				    	byte[] byteArray = Base64.getDecoder().decode(fileStream);
 				    	for(byte b : byteArray)
 						{
@@ -131,11 +129,38 @@ public class MessageReceiver extends Thread {
 								messageLabel.setStyle("-fx-background-color:#e67e22;-fx-padding:10;-fx-background-radius:8;");
 								messageLabel.setTextFill(Color.WHITE);
 								messageLabel.setUnderline(true);
+								Label senderLabel = new Label(sender);
+								senderLabel.setFont(new Font(10));
+								senderLabel.setStyle("-fx-padding:2;");
+								senderLabel.setTextFill(Color.WHITE);
+								senderLabel.setVisible(false);
+								VBox messageInfo = new VBox(messageLabel,senderLabel);
+								
 								BorderPane borderPane = new BorderPane();
-								borderPane.setLeft(messageLabel);
+								borderPane.setLeft(messageInfo);
 								vbox.getChildren().add(borderPane);
 								messageListView.setContent(vbox);
 								messageLabel.setCursor(Cursor.HAND);
+								
+								messageLabel.setOnMouseEntered(new EventHandler<Event>() {
+
+									@Override
+									public void handle(Event event) {
+										senderLabel.setVisible(true);
+										messageLabel.setOpacity(0.9);
+										
+									}
+								});
+								
+								messageLabel.setOnMouseExited(new EventHandler<Event>() {
+
+									@Override
+									public void handle(Event event) {
+										senderLabel.setVisible(false);
+										messageLabel.setOpacity(1.0);
+										
+									}
+								});
 								messageLabel.setOnMouseClicked(new EventHandler<Event>() {
 
 									@Override
@@ -180,6 +205,7 @@ public class MessageReceiver extends Thread {
 				    else
 				    {
 				    	String message = (String) jsonObject.get("message");
+				    	sender = (String) jsonObject.get("sender");
 				    	for(String msg : messageList)
 				    	{
 				    		System.out.println(msg);
@@ -208,11 +234,37 @@ public class MessageReceiver extends Thread {
 								
 								Label messageLabel = new Label(finalMessage);
 								//messageLabel.setPadding(new Insets(10,10,10,10));
+								Label senderLabel = new Label(sender);
+								senderLabel.setFont(new Font(10));
+								senderLabel.setStyle("-fx-padding:2;");
+								senderLabel.setTextFill(Color.WHITE);
+								senderLabel.setVisible(false);
 								messageLabel.setFont(new Font(15));
 								messageLabel.setStyle("-fx-background-color:#e67e22;-fx-padding:10;-fx-background-radius:8;");
 								messageLabel.setTextFill(Color.WHITE);
+								messageLabel.setCursor(Cursor.HAND);
+								messageLabel.setOnMouseEntered(new EventHandler<Event>() {
+
+									@Override
+									public void handle(Event event) {
+										senderLabel.setVisible(true);
+										messageLabel.setOpacity(0.9);
+										
+									}
+								});
+								
+								messageLabel.setOnMouseExited(new EventHandler<Event>() {
+
+									@Override
+									public void handle(Event event) {
+										senderLabel.setVisible(false);
+										messageLabel.setOpacity(1.0);
+										
+									}
+								});
+								VBox messageInfo = new VBox(messageLabel,senderLabel);
 								BorderPane borderPane = new BorderPane();
-								borderPane.setLeft(messageLabel);
+								borderPane.setLeft(messageInfo);
 								vbox.getChildren().add(borderPane);
 								messageListView.setContent(vbox);
 							}
@@ -267,6 +319,34 @@ public class MessageReceiver extends Thread {
 	    bufferedOutputStream.write(byteArray, 0, byteArray.length);
 	    bufferedOutputStream.flush();
 	    bufferedOutputStream.close();
+	    Label infoMessage = new Label("File is successfully saved as "+filePath);;
+	    infoMessage.setStyle("-fx-font-size:15;-fx-padding:10;");
+	    Label openLink = new Label("Click Here To Open");
+	    openLink.setCursor(Cursor.HAND);
+	    openLink.setStyle("-fx-font-size:15;-fx-padding:10;-fx-text-fill:#3498db;");
+	    openLink.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				try {
+					Runtime.getRuntime().exec("explorer.exe /select," + filePath);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		});
+	    VBox vbox = new VBox(infoMessage,openLink);
+	    Alert alert = new Alert(AlertType.INFORMATION);
+	    alert.setTitle("Success");
+	    alert.setHeaderText("Congratulation");
+	    
+	    //String s ="File has been successfully saved at "+filePath;
+	    //alert.setContentText(s);
+	    alert.getDialogPane().setContent(vbox);
+	    alert.show();
+
 //	    System.out.println("Received "+bufferedOutputStream.toString());
 		
 	}

@@ -19,12 +19,16 @@ import javax.swing.GroupLayout.Alignment;
 import org.json.simple.JSONObject;
 
 import javafx.application.Platform;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
@@ -35,7 +39,7 @@ public class MessageSender extends Thread{
 	private Socket client;
 	private Pane root;
 	@FXML private ScrollPane messageListView;
-	private String messageToSend;
+	private String messageToSend,sender;
 	private ArrayList<String> messageList;
 	public MessageSender()
 	{
@@ -103,6 +107,7 @@ public class MessageSender extends Thread{
 		jsonObject.put("isFile", false);
 		jsonObject.put("isColor", false);
 		jsonObject.put("message", messageToSend);
+		jsonObject.put("sender", sender);
 		OutputStream outToServer = client.getOutputStream();
 		DataOutputStream out = new DataOutputStream(outToServer);
 		out.writeUTF(jsonObject.toJSONString());
@@ -114,12 +119,36 @@ public class MessageSender extends Thread{
 			public void run() {
 				
 				Label messageLabel = new Label(messageToSend);
-				//messageLabel.setPadding(new Insets(10,10,10,10));
+				Label senderLabel = new Label("You");
+				senderLabel.setFont(new Font(10));
+				senderLabel.setStyle("-fx-padding:2;");
+				senderLabel.setTextFill(Color.WHITE);
+				senderLabel.setVisible(false);
+				
+				messageLabel.setOnMouseEntered(new EventHandler<Event>() {
+
+					@Override
+					public void handle(Event event) {
+						senderLabel.setVisible(true);
+						messageLabel.setOpacity(0.9);
+					}
+				});
+				
+				messageLabel.setOnMouseExited(new EventHandler<Event>() {
+
+					@Override
+					public void handle(Event event) {
+						senderLabel.setVisible(false);
+						messageLabel.setOpacity(1.0);
+					}
+				});
+				messageLabel.setCursor(Cursor.HAND);
 				messageLabel.setFont(new Font(15));
 				messageLabel.setStyle("-fx-background-color:#2ecc71;-fx-padding:10;-fx-background-radius:8;");
 				messageLabel.setTextFill(Color.WHITE);
+				VBox messageInfo = new VBox(messageLabel,senderLabel);
 				BorderPane borderPane = new BorderPane();
-				borderPane.setRight(messageLabel);
+				borderPane.setRight(messageInfo);
 				MessageReceiver.vbox.getChildren().add(borderPane);
 				messageListView.setContent(MessageReceiver.vbox);
 			}
@@ -142,6 +171,7 @@ public class MessageSender extends Thread{
 		jsonObject.put("isFile", true);
 		jsonObject.put("isColor", false);
 		jsonObject.put("name", fileName);
+		jsonObject.put("sender", sender);
 		jsonObject.put("fileStream", Base64.getEncoder().encodeToString(byteArray));
 		DataOutputStream out = new DataOutputStream(outToServer);
 		out.writeUTF(jsonObject.toJSONString());
@@ -156,8 +186,32 @@ public class MessageSender extends Thread{
 				messageLabel.setFont(new Font(15));
 				messageLabel.setStyle("-fx-background-color:#2ecc71;-fx-padding:10;-fx-background-radius:8;");
 				messageLabel.setTextFill(Color.WHITE);
+				Label senderLabel = new Label("You");
+				senderLabel.setFont(new Font(10));
+				senderLabel.setStyle("-fx-padding:2;");
+				senderLabel.setTextFill(Color.WHITE);
+				senderLabel.setVisible(false);
+				
+				messageLabel.setOnMouseEntered(new EventHandler<Event>() {
+
+					@Override
+					public void handle(Event event) {
+						senderLabel.setVisible(true);
+						messageLabel.setOpacity(0.9);
+					}
+				});
+				
+				messageLabel.setOnMouseExited(new EventHandler<Event>() {
+
+					@Override
+					public void handle(Event event) {
+						senderLabel.setVisible(false);
+						messageLabel.setOpacity(1.0);
+					}
+				});
+				VBox messageInfo = new VBox(messageLabel,senderLabel);
 				BorderPane borderPane = new BorderPane();
-				borderPane.setRight(messageLabel);
+				borderPane.setRight(messageInfo);
 				MessageReceiver.vbox.getChildren().add(borderPane);
 				messageListView.setContent(MessageReceiver.vbox);
 				
@@ -188,6 +242,14 @@ public class MessageSender extends Thread{
 	public ArrayList<String> getMessageList() {
 		return messageList;
 	}
+	public String getSender() {
+		return sender;
+	}
+	public void setSender(String sender) {
+		this.sender = sender;
+	}
+	
+	
 	
 	
 
