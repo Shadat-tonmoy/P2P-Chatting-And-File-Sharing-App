@@ -148,8 +148,8 @@ public class MessageSender extends Thread{
 				});
 				messageLabel.setCursor(Cursor.HAND);
 				messageLabel.setFont(new Font(15));
-				messageLabel.setStyle("-fx-background-color:#2ecc71;-fx-padding:10;-fx-background-radius:8;");
-				messageLabel.setTextFill(Color.WHITE);
+				messageLabel.setStyle("-fx-background-color:#ecf0f1;-fx-padding:10;-fx-background-radius:8;");
+				messageLabel.setTextFill(Color.BLACK);
 				VBox messageInfo = new VBox(messageLabel,senderLabel);
 				BorderPane borderPane = new BorderPane();
 				borderPane.setRight(messageInfo);

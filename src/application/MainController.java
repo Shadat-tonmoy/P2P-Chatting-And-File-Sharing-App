@@ -2,13 +2,16 @@ package application;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import com.sun.javafx.scene.control.skin.CustomColorDialog;
@@ -28,6 +31,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -46,6 +50,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import message.*;
 
 public class MainController extends Thread{
@@ -63,7 +68,7 @@ public class MainController extends Thread{
 	private MessageReceiver messageReceiver;
 	private MessageSender messageSender;
 	private Thread conncetionChecker;
-	@FXML private ImageView messageSendButton,fileAttachButton,saveMessageButton;
+	@FXML private ImageView messageSendButton,fileAttachButton,saveMessageButton,loadMessageIcon;
 	@FXML private ColorPicker themeChangeButton;
 	private FileChooser fileChooser;
 	private Stage stage;
@@ -84,8 +89,6 @@ public class MainController extends Thread{
 		setOnClickListener();
 		allMessages = new ArrayList<String>();
 		conncetionChecker = new Thread(this,"Conncetion Checker");
-		
-		
 	}
 	
 	@Override
@@ -114,6 +117,7 @@ public class MainController extends Thread{
 					else System.out.println("Thread not active");
 					
 				}
+				System.out.println("TOtal running...."+Thread.activeCount());
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -122,14 +126,6 @@ public class MainController extends Thread{
 				e.printStackTrace();
 			}
 		}
-//		if(conncetionChecker.isAlive())
-//		{
-//			conncetionChecker.stop();
-//			System.out.println("Thread Closed");
-//			
-//		}
-//		else System.out.println("Thread not active");
-		
 	}
 	
 	public void showChatScreen() throws IOException
@@ -228,6 +224,7 @@ public class MainController extends Thread{
 		scrollPane.setStyle("-fx-background:transparent;");
 		saveMessageButton = (ImageView) root.lookup("#saveMessageButton");
 		chatUserNameLabel = (Label) root.lookup("#chatUserNameLabel");
+		loadMessageIcon = (ImageView) root.lookup("#loadMessageIcon");
 		chatUserNameLabel.setText("Welcome "+userName);
 		
 		
@@ -276,11 +273,6 @@ public class MainController extends Thread{
 				Color color = themeChangeButton.getValue();
 
 				String hexColor = "#" + Integer.toHexString(color.hashCode()); 
-				//root.setBackground(new Background(new BackgroundFill(Color.web(color.toString()), CornerRadii.EMPTY, Insets.EMPTY)));
-				//scrollPane.setBackground(new Background(new BackgroundFill(Color.web(color.toString()), CornerRadii.EMPTY, Insets.EMPTY)));
-				//scrollPane.setStyle("-fx-background: "+hexColor+";-fx-border-color: "+hexColor+";");
-				//root.setStyle("-fx-background: "+hexColor+";");
-				
 				
 				System.out.println(scrollPane);
 				try {
@@ -296,7 +288,56 @@ public class MainController extends Thread{
 
 			@Override
 			public void handle(Event arg0) {
-				saveMessages();
+				try {
+					saveMessages(false);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+			}
+		});
+		
+		loadMessageIcon.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				for(String message : allMessages)
+				{
+					System.out.println(message);
+				}
+				try {
+					FileReader fileReader = new FileReader("C:\\chatlog\\"+ipAddressToConnect+".txt");
+					StringBuilder messages = new StringBuilder();
+					while(fileReader.read()!=-1)
+					{
+						System.out.println((char)fileReader.read());
+						
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+				
+			}
+		});
+		
+		stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+
+			@Override
+			public void handle(WindowEvent event) {
+				try {
+					saveMessages(true);
+				} catch (IOException | InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				
 			}
 		});
@@ -312,8 +353,6 @@ public class MainController extends Thread{
 		portToListen = clientPortField.getText().toString();
 		userName = userNameField.getText().toString();
 	}
-	
-	
 	
 	public void setStage(Stage stage) {
 		this.stage = stage;
@@ -362,7 +401,7 @@ public class MainController extends Thread{
 		message.setText("Connected");
 	}
 	
-	public void saveMessages(){
+	public void saveMessages(boolean isExiting) throws IOException, InterruptedException{
 		sentMessages = messageSender.getMessageList();
 		String messages = "";
 		for(String message : allMessages)
@@ -372,27 +411,53 @@ public class MainController extends Thread{
 		System.out.println(messages);
 		byte[] byteArrayFromString = messages.getBytes(Charset.forName("UTF-8"));
 		
-
-		FileChooser fileSaver = new FileChooser();
-		//FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-		fileSaver.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Text File",
-                        "*.txt"),
-                new FileChooser.ExtensionFilter("Document",
-                        "*.pdf", "*.docx")
-                );
-        File file = fileSaver.showSaveDialog(stage);
-        if(file!=null)
-        {
-        	System.out.println(file.getAbsolutePath());
-        	try {
-				saveFile(file.getAbsolutePath(),byteArrayFromString);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
 		
+		if(!isExiting)
+		{
+			FileChooser fileSaver = new FileChooser();
+			//FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+			fileSaver.getExtensionFilters().addAll(
+	                new FileChooser.ExtensionFilter("Text File",
+	                        "*.txt"),
+	                new FileChooser.ExtensionFilter("Document",
+	                        "*.pdf", "*.docx")
+	                );
+	        File file = fileSaver.showSaveDialog(stage);
+	        if(file!=null)
+	        {
+	        	System.out.println(file.getAbsolutePath());
+	        	try {
+					saveFile(file.getAbsolutePath(),byteArrayFromString,false);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+	        }
+		}
+		else 
+		{
+			
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Confirm to close");
+			String s = "Are you sure to exit?";
+			alert.setContentText(s);
+			Optional<ButtonType> result = alert.showAndWait();
+			if ((result.isPresent()) && (result.get() == ButtonType.OK))
+			{
+				saveFile("C:\\chatlog\\"+ipAddressToConnect+".txt",byteArrayFromString,true);
+				//Thread.currentThread().stop();
+				//messageSender.stop();
+				//messageReceiver.stop();
+				Platform.exit();
+				System.exit(0);
+				if(messageReceiver.isAlive())
+					messageReceiver.join();
+				if(messageSender.isAlive())
+					messageSender.join();
+				
+				
+			}			
+		}
 	}
 	
 	public void saveReceivedMessage()
@@ -400,7 +465,7 @@ public class MainController extends Thread{
 		
 	}
 	
-	public void saveFile(String filePath,byte[] byteArray) throws IOException
+	public void saveFile(String filePath,byte[] byteArray,boolean isExiting) throws IOException
 	{
 
 		System.out.println("From OutSide");
@@ -413,32 +478,31 @@ public class MainController extends Thread{
 	    bufferedOutputStream.write(byteArray, 0, byteArray.length);
 	    bufferedOutputStream.flush();
 	    bufferedOutputStream.close();
-	    
+	    if(!isExiting)
+	    {
+	    	Label infoMessage = new Label("File is successfully saved as "+filePath);;
+		    infoMessage.setStyle("-fx-font-size:15;-fx-padding:10;");
+		    Label openLink = new Label("Click Here To Open");
+		    openLink.setCursor(Cursor.HAND);
+		    openLink.setStyle("-fx-font-size:15;-fx-padding:10;-fx-text-fill:#3498db;");
+		    openLink.setOnMouseClicked(new EventHandler<Event>() {
 
-	    Label infoMessage = new Label("File is successfully saved as "+filePath);;
-	    infoMessage.setStyle("-fx-font-size:15;-fx-padding:10;");
-	    Label openLink = new Label("Click Here To Open");
-	    openLink.setCursor(Cursor.HAND);
-	    openLink.setStyle("-fx-font-size:15;-fx-padding:10;-fx-text-fill:#3498db;");
-	    openLink.setOnMouseClicked(new EventHandler<Event>() {
-
-			@Override
-			public void handle(Event event) {
-				try {
-					Runtime.getRuntime().exec("explorer.exe /select," + filePath);
-				} catch (IOException e) {
-					e.printStackTrace();
+				@Override
+				public void handle(Event event) {
+					try {
+						Runtime.getRuntime().exec("explorer.exe /select," + filePath);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
 				}
-				
-			}
-		});
-	    VBox vbox = new VBox(infoMessage,openLink);
-	    Alert alert = new Alert(AlertType.INFORMATION);
-	    alert.setTitle("Success");
-	    alert.setHeaderText("Congratulation");
-	    alert.getDialogPane().setContent(vbox);
-	    alert.show();
+			});
+		    VBox vbox = new VBox(infoMessage,openLink);
+		    Alert alert = new Alert(AlertType.INFORMATION);
+		    alert.setTitle("Success");
+		    alert.setHeaderText("Congratulation");
+		    alert.getDialogPane().setContent(vbox);
+		    alert.show();
+	    }
 	}
-
-
 }

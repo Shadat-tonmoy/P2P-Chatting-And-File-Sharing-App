@@ -16,7 +16,7 @@
             <TextArea fx:id="messageSendBox" layoutX="4.0" layoutY="554.0" prefHeight="39.0" prefWidth="364.0" promptText="Type a message..." style="-fx-border-width: 0;" />
             <ImageView fx:id="messageSendButton" fitHeight="27.0" fitWidth="38.0" layoutX="378.0" layoutY="561.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
                <image>
-                  <Image url="@../images/send.png" />
+                  <Image url="@images/send.png" />
                </image>
             </ImageView>
             <ImageView fx:id="fileAttachButton" fitHeight="30.0" fitWidth="30.0" layoutX="436.0" layoutY="559.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
@@ -36,6 +36,11 @@
                </image>
             </ImageView>
             <ScrollPane fx:id="messageList" layoutX="8.0" layoutY="14.0" prefHeight="523.0" prefWidth="585.0" style="-fx-hbar-policy: never; -fx-vbar-policy: never;" styleClass="viewport" stylesheets="@listStyle.css" />
+            <ImageView fx:id="loadMessageIcon" fitHeight="27.0" fitWidth="30.0" layoutX="559.0" layoutY="561.0" pickOnBounds="true" preserveRatio="true" style="-fx-cursor: hand;">
+               <image>
+                  <Image url="@../images/loadIcon.png" />
+               </image>
+            </ImageView>
          </children>
       </Pane>
       <Pane layoutX="-7.0" layoutY="-1.0" prefHeight="55.0" prefWidth="613.0" style="-fx-background-color: rgba(230, 126, 34,1.0); -fx-min-width: 630;">
